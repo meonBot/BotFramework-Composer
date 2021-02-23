@@ -73,11 +73,45 @@ interface DefineConversationFormData {
   schemaUrl: string;
   location?: string;
 
+  profile?: PublishProfile; // abs payload to create bot
+
   templateDir?: string; // location of the imported template
   eTag?: string; // e tag used for content sync between composer and imported bot content
   urlSuffix?: string; // url to deep link to after creation
   alias?: string; // identifier that is used to track bots between imports
   preserveRoot?: boolean; // identifier that is used to determine ay project file renames upon creation
+}
+
+interface PublishProfile {
+  name?: string;
+  environment?: string;
+  hostname?: string;
+  runtimeIdentifier: string;
+  settings: {
+    applicationInsights?: {
+      InstrumentationKey?: string;
+    };
+    cosmosDb?: {
+      cosmosDBEndpoint: string;
+      authKey: string;
+      databaseId: string;
+      containerId: string;
+    };
+    blobStorage?: {
+      connectionString: string;
+      container: string;
+    };
+    luis?: {
+      authoringKey: string;
+      authoringEndpoint: string;
+      endpointKey: string;
+      endpoint: string;
+      region: string;
+    };
+    MicrosoftAppId: string;
+    MicrosoftAppPassword: string;
+  };
+  [key: string]: any;
 }
 
 interface DefineConversationProps
@@ -233,6 +267,18 @@ const DefineConversation: React.FC<DefineConversationProps> = (props) => {
             }),
           });
           addNotification(notification);
+        }
+      }
+
+      if (props.location?.search) {
+        const decoded = decodeURIComponent(props.location.search);
+        const { source, payload } = querystring.parse(decoded);
+        if (payload && typeof payload === 'string' && source) {
+          const profile = JSON.parse(payload);
+          if (source === 'abs') {
+            dataToSubmit.alias = `abs-${profile.botName}-${profile.appId}`;
+            dataToSubmit.profile = profile;
+          }
         }
       }
 

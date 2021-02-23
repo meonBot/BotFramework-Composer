@@ -120,6 +120,7 @@ const CreationFlow: React.FC<CreationFlowProps> = () => {
       urlSuffix: formData.urlSuffix,
       alias: formData.alias,
       preserveRoot: formData.preserveRoot,
+      profile: formData.profile,
     };
     if (templateId === 'conversationalcore') {
       createNewBotV2(newBotData);
