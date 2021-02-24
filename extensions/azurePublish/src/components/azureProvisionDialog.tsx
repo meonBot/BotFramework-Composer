@@ -125,7 +125,6 @@ function getExistResources (config){
     if(config.settings?.blobStorage?.connectionString){
       result.push(AzureResourceTypes.BLOBSTORAGE);
     }
-    console.log(result);
     return result;
   } else return [];
 }
@@ -416,7 +415,6 @@ export const AzureProvisionDialog: React.FC = () => {
 
   const checkNameAvailability = useMemo(()=>(newName: string)=>{
     setErrorHostName('');
-    console.log(publishType);
     if(currentSubscription && publishType === 'azurePublish'){
       // check app name whether exist or not
       CheckWebAppNameAvailability(token, newName, currentSubscription).then(value=>{
@@ -651,11 +649,13 @@ export const AzureProvisionDialog: React.FC = () => {
             id={publishType}
             schema={getSchema()}
             onChange={(value) => {
-              setEditorError(false);
               setImportConfig(value);
+              setEditorError(false);
             }}
-            onError={() => {
-              setEditorError(true);
+            onError={(error) => {
+              if(error)
+                setEditorError(true);
+              console.log(error);
             }}
           />
         </div>
