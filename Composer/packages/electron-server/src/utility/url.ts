@@ -39,8 +39,10 @@ export const parseDeepLinkUrl = (deeplinkUrl: string) => {
         const payload = convertedUrl.searchParams.get('payload');
         if (!source || !payload) {
           throw new Error('bfcomposer://import must include a "source" and "payload" parameter.');
+        } else if (source && source === 'abs') {
+          // TODO. abs would not support import protocol, if so, redirect to create
+          return `projects/create?source=${encodeURIComponent(source)}&payload=${encodeURIComponent(payload)}`;
         }
-
         return `projects/import?source=${encodeURIComponent(source)}&payload=${encodeURIComponent(payload)}`;
       }
 
