@@ -14,8 +14,8 @@ import { AuthDialog } from '../../components/Auth/AuthDialog';
 import { createNotification } from '../../recoilModel/dispatchers/notification';
 import { Notification } from '../../recoilModel/types';
 import { getSensitiveProperties } from '../../recoilModel/dispatchers/utils/project';
-import { armScopes } from '../../constants';
 import { getTokenFromCache, isShowAuthDialog, isGetTokenFromUser, getTenantIdFromCache } from '../../utils/auth';
+import { armScopes, vaultScopes } from '../../constants';
 import { AuthClient } from '../../utils/authClient';
 import TelemetryClient from '../../telemetry/TelemetryClient';
 import { ApiStatus, PublishStatusPollingUpdater, pollingUpdaterList } from '../../utils/publishStatusPollingUpdater';
@@ -216,17 +216,20 @@ const Publish: React.FC<RouteComponentProps<{ projectId: string; targetName?: st
   const publish = async (items: BotStatus[]) => {
     // get token
     let token = '';
+    // keyvault = '';
     if (isGetTokenFromUser()) {
       token = getTokenFromCache('accessToken');
     } else {
-      let tenant = getTenantIdFromCache();
-      if (!tenant) {
-        const tenants = await AuthClient.getTenants();
-        console.log(tenants);
-        tenant = tenants[0];
-      }
-      token = await AuthClient.getARMTokenForTenant(tenant);
-      // token = await AuthClient.getAccessToken(armScopes);
+      // let tenant = getTenantIdFromCache();
+      // if (!tenant) {
+      //   const tenants = await AuthClient.getTenants();
+      //   console.log(tenants);
+      //   tenant = tenants[0];
+      // }
+      // token = await AuthClient.getARMTokenForTenant(tenant);
+      token = await AuthClient.getAccessToken(armScopes);
+      // keyvault = await AuthClient.getAccessToken(vaultScopes);
+      // console.log(keyvault);
     }
 
     setPublishDialogVisiblity(false);

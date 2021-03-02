@@ -17,7 +17,7 @@ import { TooltipHost } from 'office-ui-fabric-react/lib/Tooltip';
 import { Icon } from 'office-ui-fabric-react/lib/Icon';
 
 import { separator } from '../../publish/styles';
-import { armScopes, graphScopes } from '../../../constants';
+import { armScopes, graphScopes, vaultScopes } from '../../../constants';
 import { PublishType } from '../../../recoilModel/types';
 import { PluginAPI } from '../../../plugins/api';
 import { dispatcherState } from '../../../recoilModel';
@@ -132,7 +132,7 @@ export const ProfileFormDialog: React.FC<ProfileFormDialogProps> = (props) => {
   useEffect(() => {
     PluginAPI.publish.startProvision = async (config) => {
       const fullConfig = { ...config, name: name, type: targetType };
-      let arm, graph;
+      let arm, graph, keyvault;
       if (!isGetTokenFromUser()) {
         // login or get token implicit
         // arm = await AuthClient.getAccessToken(armScopes);
@@ -144,12 +144,14 @@ export const ProfileFormDialog: React.FC<ProfileFormDialogProps> = (props) => {
         }
         arm = await AuthClient.getARMTokenForTenant(tenant);
         graph = await AuthClient.getAccessToken(graphScopes);
+        keyvault = await AuthClient.getAccessToken(vaultScopes);
+        console.log(keyvault);
       } else {
         // get token from cache
         arm = getTokenFromCache('accessToken');
         graph = getTokenFromCache('graphToken');
       }
-      provisionToTarget(fullConfig, config.type, projectId, arm, graph, current?.item);
+      // provisionToTarget(fullConfig, config.type, projectId, arm, graph, current?.item);
     };
   }, [name, targetType]);
 

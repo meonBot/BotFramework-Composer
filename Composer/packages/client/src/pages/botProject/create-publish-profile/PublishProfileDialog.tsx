@@ -17,7 +17,7 @@ import { PluginHost } from '../../../components/PluginHost/PluginHost';
 import { defaultPublishSurface, pvaPublishSurface, azurePublishSurface } from '../../publish/styles';
 import TelemetryClient from '../../../telemetry/TelemetryClient';
 import { AuthClient } from '../../../utils/authClient';
-import { armScopes, graphScopes } from '../../../constants';
+import { armScopes, graphScopes, vaultScopes } from '../../../constants';
 import { dispatcherState } from '../../../recoilModel';
 
 import { ProfileFormDialog } from './ProfileFormDialog';
@@ -137,7 +137,7 @@ export const PublishProfileDialog: React.FC<PublishProfileDialogProps> = (props)
       };
       PluginAPI.publish.startProvision = async (config) => {
         const fullConfig = { ...config, name: current.item.name, type: current.item.type };
-        let arm, graph;
+        let arm, graph, keyvault;
         if (!isGetTokenFromUser()) {
           // login or get token implicit
           // arm = await AuthClient.getAccessToken(armScopes);
@@ -149,12 +149,14 @@ export const PublishProfileDialog: React.FC<PublishProfileDialogProps> = (props)
           }
           arm = await AuthClient.getARMTokenForTenant(tenant);
           graph = await AuthClient.getAccessToken(graphScopes);
+          keyvault = await AuthClient.getAccessToken(vaultScopes);
+          console.log(keyvault);
         } else {
           // get token from cache
           arm = getTokenFromCache('accessToken');
           graph = getTokenFromCache('graphToken');
         }
-        provisionToTarget(fullConfig, config.type, projectId, arm, graph, current?.item);
+        // provisionToTarget(fullConfig, config.type, projectId, arm, graph, current?.item);
       };
     }
   }, [current, types, savePublishTarget]);

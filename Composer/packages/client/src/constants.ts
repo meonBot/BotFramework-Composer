@@ -382,8 +382,8 @@ export const graphScopes = {
   targetResource: 'https://graph.microsoft.com/',
 };
 export const vaultScopes = {
-  scopes: ['https://composertest.vault.azure.net/'],
-  targetResource: 'https://composertest.vault.azure.net/',
+  scopes: ['https://vault.azure.net/.default'],
+  targetResource: 'https://vault.azure.net/',
 };
 
 export const authUrl = `https://login.microsoftonline.com/${authConfig.tenantId}/oauth2/v2.0/authorize`;
