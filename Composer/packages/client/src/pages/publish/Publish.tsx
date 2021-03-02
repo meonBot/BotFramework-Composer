@@ -15,7 +15,7 @@ import { createNotification } from '../../recoilModel/dispatchers/notification';
 import { Notification } from '../../recoilModel/types';
 import { getSensitiveProperties } from '../../recoilModel/dispatchers/utils/project';
 import { armScopes } from '../../constants';
-import { getTokenFromCache, isShowAuthDialog, isGetTokenFromUser } from '../../utils/auth';
+import { getTokenFromCache, isShowAuthDialog, isGetTokenFromUser, getTenantIdFromCache } from '../../utils/auth';
 import { AuthClient } from '../../utils/authClient';
 import TelemetryClient from '../../telemetry/TelemetryClient';
 import { ApiStatus, PublishStatusPollingUpdater, pollingUpdaterList } from '../../utils/publishStatusPollingUpdater';
@@ -219,7 +219,14 @@ const Publish: React.FC<RouteComponentProps<{ projectId: string; targetName?: st
     if (isGetTokenFromUser()) {
       token = getTokenFromCache('accessToken');
     } else {
-      token = await AuthClient.getAccessToken(armScopes);
+      let tenant = getTenantIdFromCache();
+      if (!tenant) {
+        const tenants = await AuthClient.getTenants();
+        console.log(tenants);
+        tenant = tenants[0];
+      }
+      token = await AuthClient.getARMTokenForTenant(tenant);
+      // token = await AuthClient.getAccessToken(armScopes);
     }
 
     setPublishDialogVisiblity(false);

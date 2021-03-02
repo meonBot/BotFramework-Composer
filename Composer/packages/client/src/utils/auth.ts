@@ -269,6 +269,9 @@ export function getTokenFromCache(key: string) {
   return token;
 }
 
+export function getTenantIdFromCache() {
+  return storage.get('tenant');
+}
 // clean token by clientId with fuzzy matching or key
 export function cleanTokenFromCache(key: string) {
   storage.remove(key);
