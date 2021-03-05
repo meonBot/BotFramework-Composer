@@ -4,7 +4,7 @@
 import { join, resolve } from 'path';
 
 import { AppUpdaterSettings, UserSettings } from '@bfc/shared';
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, session } from 'electron';
 import { UpdateInfo } from 'electron-updater';
 import fixPath from 'fix-path';
 import formatMessage from 'format-message';
@@ -24,6 +24,16 @@ import { isLinux, isMac, isWindows } from './utility/platform';
 import { parseDeepLinkUrl } from './utility/url';
 import { getMachineId } from './utility/machineId';
 import { getSessionId } from './utility/sessionId';
+
+session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+  callback({
+    responseHeaders: {
+      ...details.responseHeaders,
+      'Content-Security-Policy': ["default-src 'self'", 'media-src *', "script-src 'self'"],
+      'X-Content-Security-Policy': ["default-src 'self'", "script-src 'self'"],
+    },
+  });
+});
 
 const env = log.extend('env');
 env('%O', process.env);
