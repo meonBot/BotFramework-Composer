@@ -25,16 +25,6 @@ import { parseDeepLinkUrl } from './utility/url';
 import { getMachineId } from './utility/machineId';
 import { getSessionId } from './utility/sessionId';
 
-session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-  callback({
-    responseHeaders: {
-      ...details.responseHeaders,
-      'Content-Security-Policy': ["default-src 'self'", 'media-src *', "script-src 'self'"],
-      'X-Content-Security-Policy': ["default-src 'self'", "script-src 'self'"],
-    },
-  });
-});
-
 const env = log.extend('env');
 env('%O', process.env);
 
@@ -300,6 +290,15 @@ async function run() {
 
     const mainWindow = getMainWindow();
     mainWindow?.webContents.send('session-update', 'session-started');
+    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Content-Security-Policy': ["default-src 'self'", 'media-src *', "script-src 'self'"],
+          'X-Content-Security-Policy': ["default-src 'self'", "script-src 'self'"],
+        },
+      });
+    });
   });
 
   // Quit when all windows are closed.
